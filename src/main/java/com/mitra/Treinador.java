@@ -1,4 +1,4 @@
-package com.example.atleta;
+package com.mitra;
 
 import java.io.Serializable;
 

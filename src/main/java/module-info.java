@@ -3,6 +3,6 @@ module com.example.atleta {
     requires javafx.fxml;
 
 
-    opens com.example.atleta to javafx.fxml;
-    exports com.example.atleta;
+    opens com.mitra to javafx.fxml;
+    exports com.mitra;
 }
