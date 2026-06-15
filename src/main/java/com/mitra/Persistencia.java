@@ -10,6 +10,8 @@ public class Persistencia {
     private static final String ARQ_TREINADORES = "treinadores.dat";
     private static final String ARQ_MODALIDADES = "modalidades.dat";
     private static final String ARQ_EQUIPES = "equipes.dat";
+    private static final String ARQ_MEDICO = "medico.dat";
+    private static final String ARQ_PRESIDENTE = "presidente.dat";
 
 
     // ---------------- ATLETAS ----------------
@@ -142,4 +144,70 @@ public class Persistencia {
         salvarEquipes(equipes);
     }
 
+    // ---------------- MEDICO ----------------
+
+    // Salva a lista de medico no arquivo binário
+    public static void salvarMedico(ArrayList<Medico> medico) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ARQ_MEDICO))) {
+            oos.writeObject(medico);
+            System.out.println("Lista de medicos salva com sucesso.");
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar medicos: " + e.getMessage());
+        }
+    }
+
+    // Lê a lista de medico do arquivo binário
+    public static ArrayList<Medico> lerMedico() {
+        ArrayList<Medico> lista = new ArrayList<>();
+        File arq = new File(ARQ_MEDICO);
+        if (!arq.exists()) return lista;
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ARQ_MEDICO))) {
+            lista = (ArrayList<Medico>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Erro ao ler medicos: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    // Adiciona um novo medico e regrava o arquivo
+    public static void adicionarMedico(Medico novo) {
+        ArrayList<Medico> medico = lerMedico();
+        medico.add(novo);
+        salvarMedico(medico);
+    }
+
+
+    // ---------------- Presidente ----------------
+
+    // Salva a lista de presidente no arquivo binário
+    public static void salvarPresidente(ArrayList<Presidente> presidente) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ARQ_PRESIDENTE))) {
+            oos.writeObject(presidente);
+            System.out.println("Lista de presidente salva com sucesso.");
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar presidente: " + e.getMessage());
+        }
+    }
+
+    // Lê a lista de presidente do arquivo binário
+    public static ArrayList<Presidente> lerPresidente() {
+        ArrayList<Presidente> lista = new ArrayList<>();
+        File arq = new File(ARQ_PRESIDENTE);
+        if (!arq.exists()) return lista;
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ARQ_PRESIDENTE))) {
+            lista = (ArrayList<Presidente>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Erro ao ler presidente: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    // Adiciona um novo presidente e regrava o arquivo
+    public static void adicionarPresidente(Presidente novo) {
+        ArrayList<Presidente> presidente = lerPresidente();
+        presidente.add(novo);
+        salvarPresidente(presidente);
+    }
 }
