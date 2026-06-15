@@ -28,8 +28,14 @@ public class Main extends Application {
         // Criamos a aba Equipes
         Tab tabEquipes = criarAbaEquipes();
 
+        // Criamos a aba Equipes
+        Tab tabMedico = criarAbaMedico();
+
+        // Criamos a aba Equipes
+        Tab tabPresidente = criarAbaPresidente();
+
         // Adiciona as abas ao TabPane
-        tabPane.getTabs().addAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes);
+        tabPane.getTabs().addAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabMedico, tabPresidente);
 
         // Cena principal
         Scene scene = new Scene(tabPane, 1000, 800);
@@ -516,6 +522,196 @@ public class Main extends Application {
 
         return new Tab("Equipes", equipesBox);
     }
-}
 
+    // ------------------- CRUD MÉDICO -------------------
+    private Tab criarAbaMedico() {
+        VBox medicoBox = new VBox(10);
+
+        // Campos de entrada
+        TextField idMedico = new TextField();
+        idMedico.setPromptText("ID");
+        TextField nomeMedico = new TextField();
+        nomeMedico.setPromptText("Nome");
+        DatePicker nascimentoMedico = new DatePicker();
+        TextField crmMedico = new TextField();
+        crmMedico.setPromptText("CRM");
+
+        // Tabela para mostrar os médicos cadastrados
+        TableView<Medico> tabelaMedico = new TableView<>();
+
+        // Coluna ID
+        TableColumn<Medico, String> colIdM = new TableColumn<>("ID");
+        colIdM.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getId())));
+
+        // Coluna Nome
+        TableColumn<Medico, String> colNomeM = new TableColumn<>("Nome");
+        colNomeM.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getNome()));
+
+        // Coluna Data de Nascimento
+        TableColumn<Medico, String> colNascimentoM = new TableColumn<>("Nascimento");
+        colNascimentoM.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getDataNascimento())));
+
+        // Coluna CRM
+        TableColumn<Medico, String> colCrmM = new TableColumn<>("CRM");
+        colCrmM.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getCRM())));
+
+        tabelaMedico.getColumns().addAll(colIdM, colNomeM, colNascimentoM, colCrmM);
+
+        // Botões CRUD
+        Button salvarMedico = new Button("Inserir");
+        Button listarMedico = new Button("Listar");
+        Button atualizarMedico = new Button("Atualizar");
+        Button excluirMedico = new Button("Excluir");
+
+        // ---------------- INSERIR ----------------
+        salvarMedico.setOnAction(e -> {
+            try {
+                Medico medico = new Medico(
+                        Integer.parseInt(idMedico.getText()),
+                        nomeMedico.getText(),
+                        nascimentoMedico.getValue(),
+                        Integer.parseInt(crmMedico.getText())
+                );
+                Persistencia.adicionarMedico(medico);
+                new Alert(Alert.AlertType.INFORMATION, "Médico salvo!").show();
+            } catch (Exception ex) {
+                new Alert(Alert.AlertType.ERROR, "Erro: " + ex.getMessage()).show();
+            }
+        });
+
+        // ---------------- LISTAR ----------------
+        listarMedico.setOnAction(e -> {
+            tabelaMedico.getItems().clear();
+            tabelaMedico.getItems().addAll(Persistencia.lerMedico());
+        });
+
+        // ---------------- ATUALIZAR ----------------
+        atualizarMedico.setOnAction(e -> {
+            Medico selecionado = tabelaMedico.getSelectionModel().getSelectedItem();
+            if (selecionado != null) {
+                try {
+                    selecionado.setNome(nomeMedico.getText());
+                    selecionado.setCRM(Integer.parseInt(crmMedico.getText()));
+
+                    ArrayList<Medico> lista = new ArrayList<>(tabelaMedico.getItems());
+                    Persistencia.salvarMedico(lista);
+
+                    listarMedico.fire();
+                    new Alert(Alert.AlertType.INFORMATION, "Médico atualizado!").show();
+                } catch (Exception ex) {
+                    new Alert(Alert.AlertType.ERROR, "Erro: " + ex.getMessage()).show();
+                }
+            }
+        });
+
+        // ---------------- EXCLUIR ----------------
+        excluirMedico.setOnAction(e -> {
+            Medico selecionado = tabelaMedico.getSelectionModel().getSelectedItem();
+            if (selecionado != null) {
+                tabelaMedico.getItems().remove(selecionado);
+                ArrayList<Medico> lista = new ArrayList<>(tabelaMedico.getItems());
+                Persistencia.salvarMedico(lista);
+                new Alert(Alert.AlertType.INFORMATION, "Médico excluído!").show();
+            }
+        });
+
+        // Adiciona todos os componentes na aba
+        medicoBox.getChildren().addAll(idMedico, nomeMedico, nascimentoMedico, crmMedico,
+                salvarMedico, listarMedico, atualizarMedico, excluirMedico, tabelaMedico);
+
+        return new Tab("Médico", medicoBox);
+    }
+
+    // ------------------- CRUD PRESIDENTE -------------------
+    private Tab criarAbaPresidente() {
+        VBox presidenteBox = new VBox(10);
+
+        TextField idPresidente = new TextField();
+        idPresidente.setPromptText("ID");
+        TextField nomePresidente = new TextField();
+        nomePresidente.setPromptText("Nome");
+        DatePicker nascimentoPresidente = new DatePicker();
+        TextField cpfPresidente = new TextField();
+        cpfPresidente.setPromptText("CPF");
+
+        TableView<Presidente> tabelaPresidente = new TableView<>();
+
+        TableColumn<Presidente, String> colIdP = new TableColumn<>("ID");
+        colIdP.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getId())));
+
+        TableColumn<Presidente, String> colNomeP = new TableColumn<>("Nome");
+        colNomeP.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getNome()));
+
+        TableColumn<Presidente, String> colNascimentoP = new TableColumn<>("Nascimento");
+        colNascimentoP.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getDataNascimento())));
+
+        TableColumn<Presidente, String> colCpfP = new TableColumn<>("CPF");
+        colCpfP.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getCPF())));
+
+        tabelaPresidente.getColumns().addAll(colIdP, colNomeP, colNascimentoP, colCpfP);
+
+        Button salvarPresidente = new Button("Inserir");
+        Button listarPresidente = new Button("Listar");
+        Button atualizarPresidente = new Button("Atualizar");
+        Button excluirPresidente = new Button("Excluir");
+
+        // INSERIR
+        salvarPresidente.setOnAction(e -> {
+            try {
+                Presidente presidente = new Presidente(
+                        Integer.parseInt(idPresidente.getText()),
+                        nomePresidente.getText(),
+                        nascimentoPresidente.getValue(),
+                        Long.parseLong(cpfPresidente.getText()) // agora usa long
+                );
+                Persistencia.adicionarPresidente(presidente);
+                new Alert(Alert.AlertType.INFORMATION, "Presidente salvo!").show();
+            } catch (Exception ex) {
+                new Alert(Alert.AlertType.ERROR, "Erro: " + ex.getMessage()).show();
+            }
+        });
+
+        // LISTAR
+        listarPresidente.setOnAction(e -> {
+            tabelaPresidente.getItems().clear();
+            tabelaPresidente.getItems().addAll(Persistencia.lerPresidente());
+        });
+
+        // ATUALIZAR
+        atualizarPresidente.setOnAction(e -> {
+            Presidente selecionado = tabelaPresidente.getSelectionModel().getSelectedItem();
+            if (selecionado != null) {
+                try {
+                    selecionado.setNome(nomePresidente.getText());
+                    selecionado.setCPF(Long.parseLong(cpfPresidente.getText())); // usa long
+                    selecionado.setDataNascimento(nascimentoPresidente.getValue());
+
+                    ArrayList<Presidente> lista = new ArrayList<>(tabelaPresidente.getItems());
+                    Persistencia.salvarPresidente(lista);
+
+                    listarPresidente.fire();
+                    new Alert(Alert.AlertType.INFORMATION, "Presidente atualizado!").show();
+                } catch (Exception ex) {
+                    new Alert(Alert.AlertType.ERROR, "Erro: " + ex.getMessage()).show();
+                }
+            }
+        });
+
+        // EXCLUIR
+        excluirPresidente.setOnAction(e -> {
+            Presidente selecionado = tabelaPresidente.getSelectionModel().getSelectedItem();
+            if (selecionado != null) {
+                tabelaPresidente.getItems().remove(selecionado);
+                ArrayList<Presidente> lista = new ArrayList<>(tabelaPresidente.getItems());
+                Persistencia.salvarPresidente(lista);
+                new Alert(Alert.AlertType.INFORMATION, "Presidente excluído!").show();
+            }
+        });
+
+        presidenteBox.getChildren().addAll(idPresidente, nomePresidente, nascimentoPresidente, cpfPresidente,
+                salvarPresidente, listarPresidente, atualizarPresidente, excluirPresidente, tabelaPresidente);
+
+        return new Tab("Presidente", presidenteBox);
+    }
+}
 
