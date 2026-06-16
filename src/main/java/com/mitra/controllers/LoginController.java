@@ -53,22 +53,30 @@ public class LoginController {
         HBox botoes = new HBox(10, btnLogin, btnCadastrar);
 
         btnLogin.setOnAction((ActionEvent e) -> {
-            Usuario usuario = buscarUsuarioPorLogin(emailField.getText(), passField.getText());
+            try {
+                Usuario usuario = buscarUsuarioPorLogin(emailField.getText(), passField.getText());
 
-            if (usuario != null) {
-                Persistencia.salvarSessaoAtual(new SessaoAtual(usuario.getId(), true));
-                new Alert(Alert.AlertType.INFORMATION, "Login realizado com sucesso!").show();
+                if (usuario != null) {
+                    Persistencia.salvarSessaoAtual(new SessaoAtual(usuario.getId(), true));
+                    new Alert(Alert.AlertType.INFORMATION, "Login realizado com sucesso!").show();
 
-                if (aoLoginValido != null) {
-                    aoLoginValido.run();
+                    if (aoLoginValido != null) {
+                        aoLoginValido.run();
+                    }
+                } else {
+                    new Alert(Alert.AlertType.ERROR, "Email ou senha invalidos.").show();
                 }
-            } else {
-                new Alert(Alert.AlertType.ERROR, "Email ou senha invalidos.").show();
+            } catch (Exception ex) {
+                new Alert(Alert.AlertType.ERROR, "Erro ao realizar login: " + ex.getMessage()).show();
             }
         });
 
         btnCadastrar.setOnAction((ActionEvent e) -> {
-            mostrarTelaCadastro(vbox);
+            try {
+                mostrarTelaCadastro(vbox);
+            } catch (Exception ex) {
+                new Alert(Alert.AlertType.ERROR, "Erro ao abrir cadastro: " + ex.getMessage()).show();
+            }
         });
 
         vbox.getChildren().addAll(titulo, emailField, passField, botoes);
@@ -126,7 +134,11 @@ public class LoginController {
         });
 
         btnVoltar.setOnAction((ActionEvent e) -> {
-            mostrarTelaLogin(vbox);
+            try {
+                mostrarTelaLogin(vbox);
+            } catch (Exception ex) {
+                new Alert(Alert.AlertType.ERROR, "Erro ao voltar para login: " + ex.getMessage()).show();
+            }
         });
 
         vbox.getChildren().addAll(titulo, usuarioField, emailField, passField, confirmarPassField, botoes);

@@ -24,22 +24,35 @@ public class UsuarioController {
     }
 
     public VBox mostrar() {
-        Usuario usuarioLogado = usuarioSessaoAtual();
+        try {
+            Usuario usuarioLogado = usuarioSessaoAtual();
 
-        if (usuarioLogado == null) {
+            if (usuarioLogado == null) {
+                VBox box = new VBox(10);
+                Label titulo = new Label("Perfil");
+                titulo.setFont(new Font("Arial", 20));
+                Label mensagem = new Label("Nenhum usuario logado.");
+                box.getChildren().addAll(titulo, mensagem);
+                return box;
+            }
+
+            return exibirPerfil(usuarioLogado);
+        } catch (Exception ex) {
             VBox box = new VBox(10);
             Label titulo = new Label("Perfil");
             titulo.setFont(new Font("Arial", 20));
-            Label mensagem = new Label("Nenhum usuario logado.");
+            Label mensagem = new Label("Erro ao carregar perfil: " + ex.getMessage());
             box.getChildren().addAll(titulo, mensagem);
             return box;
         }
-
-        return exibirPerfil(usuarioLogado);
     }
 
     public boolean temSessaoAtiva() {
-        return usuarioSessaoAtual() != null;
+        try {
+            return usuarioSessaoAtual() != null;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     public VBox exibirPerfil(Usuario usuarioLogado) {
@@ -119,31 +132,43 @@ public class UsuarioController {
         });
 
         btnSair.setOnAction((ActionEvent e) -> {
-            Persistencia.encerrarSessaoAtual();
+            try {
+                Persistencia.encerrarSessaoAtual();
 
-            if (aoLogout != null) {
-                aoLogout.run();
+                if (aoLogout != null) {
+                    aoLogout.run();
+                }
+
+                new Alert(Alert.AlertType.INFORMATION, "Sessao encerrada com sucesso!").show();
+            } catch (Exception ex) {
+                new Alert(Alert.AlertType.ERROR, "Erro ao sair: " + ex.getMessage()).show();
             }
-
-            new Alert(Alert.AlertType.INFORMATION, "Sessao encerrada com sucesso!").show();
         });
 
         btnExcluir.setOnAction((ActionEvent e) -> {
-            Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION, "Tem certeza que deseja excluir sua conta? Esta acao nao podera ser desfeita.");
-            confirmacao.showAndWait().ifPresent(resposta -> {
-                if (resposta == ButtonType.OK) {
-                    ArrayList<Usuario> usuarios = Persistencia.lerUsuarios();
-                    usuarios.removeIf(u -> u.getId() == usuarioLogado.getId());
-                    Persistencia.salvarUsuarios(usuarios);
-                    Persistencia.encerrarSessaoAtual();
+            try {
+                Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION, "Tem certeza que deseja excluir sua conta? Esta acao nao podera ser desfeita.");
+                confirmacao.showAndWait().ifPresent(resposta -> {
+                    if (resposta == ButtonType.OK) {
+                        try {
+                            ArrayList<Usuario> usuarios = Persistencia.lerUsuarios();
+                            usuarios.removeIf(u -> u.getId() == usuarioLogado.getId());
+                            Persistencia.salvarUsuarios(usuarios);
+                            Persistencia.encerrarSessaoAtual();
 
-                    if (aoLogout != null) {
-                        aoLogout.run();
+                            if (aoLogout != null) {
+                                aoLogout.run();
+                            }
+
+                            new Alert(Alert.AlertType.INFORMATION, "Conta excluida com sucesso!").show();
+                        } catch (Exception ex) {
+                            new Alert(Alert.AlertType.ERROR, "Erro ao excluir conta: " + ex.getMessage()).show();
+                        }
                     }
-
-                    new Alert(Alert.AlertType.INFORMATION, "Conta excluida com sucesso!").show();
-                }
-            });
+                });
+            } catch (Exception ex) {
+                new Alert(Alert.AlertType.ERROR, "Erro ao confirmar exclusao: " + ex.getMessage()).show();
+            }
         });
 
         box.getChildren().addAll(

@@ -3,6 +3,7 @@ package com.mitra;
 import com.mitra.controllers.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
@@ -23,27 +24,40 @@ public class Main extends Application {
         Tab tabPerfil = new Tab("Perfil");
 
         Runnable aoLogout = () -> {
-            tabPane.getTabs().removeAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabMedico, tabPresidente, tabPerfil);
-            tabPane.getTabs().add(tabLogin);
-            tabPane.getSelectionModel().select(tabLogin);
+            try {
+                tabPane.getTabs().removeAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabMedico, tabPresidente, tabPerfil);
+                tabPane.getTabs().add(tabLogin);
+                tabPane.getSelectionModel().select(tabLogin);
+            } catch (Exception ex) {
+                new Alert(Alert.AlertType.ERROR, "Erro ao voltar para login: " + ex.getMessage()).show();
+            }
         };
 
         LoginController loginController = new LoginController(() -> {
-            tabPerfil.setContent(new UsuarioController(aoLogout).mostrar());
-            tabPane.getTabs().remove(tabLogin);
-            tabPane.getTabs().removeAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabMedico, tabPresidente, tabPerfil);
-            tabPane.getTabs().addAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabMedico, tabPresidente, tabPerfil);
-            tabPane.getSelectionModel().select(tabPerfil);
+            try {
+                tabPerfil.setContent(new UsuarioController(aoLogout).mostrar());
+                tabPane.getTabs().remove(tabLogin);
+                tabPane.getTabs().removeAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabMedico, tabPresidente, tabPerfil);
+                tabPane.getTabs().addAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabMedico, tabPresidente, tabPerfil);
+                tabPane.getSelectionModel().select(tabPerfil);
+            } catch (Exception ex) {
+                new Alert(Alert.AlertType.ERROR, "Erro ao liberar abas: " + ex.getMessage()).show();
+            }
         });
 
         tabLogin.setContent(loginController.mostrar());
         tabPerfil.setContent(new UsuarioController(aoLogout).mostrar());
 
-        if (loginController.temSessaoAtiva()) {
-            tabPane.getTabs().addAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabMedico, tabPresidente, tabPerfil);
-            tabPane.getSelectionModel().select(tabPerfil);
-        } else {
+        try {
+            if (loginController.temSessaoAtiva()) {
+                tabPane.getTabs().addAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabMedico, tabPresidente, tabPerfil);
+                tabPane.getSelectionModel().select(tabPerfil);
+            } else {
+                tabPane.getTabs().add(tabLogin);
+            }
+        } catch (Exception ex) {
             tabPane.getTabs().add(tabLogin);
+            new Alert(Alert.AlertType.ERROR, "Erro ao verificar sessao: " + ex.getMessage()).show();
         }
 
         tabLogin.setClosable(false);
