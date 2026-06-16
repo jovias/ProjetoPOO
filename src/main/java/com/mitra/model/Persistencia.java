@@ -12,6 +12,8 @@ public class Persistencia {
     private static final String ARQ_EQUIPES = "equipes.dat";
     private static final String ARQ_MEDICO = "medico.dat";
     private static final String ARQ_PRESIDENTE = "presidente.dat";
+    private static final String ARQ_USUARIOS = "usuarios.dat";
+    private static final String ARQ_SESSAO_ATUAL = "sessaoAtual.dat";
 
 
     // ---------------- ATLETAS ----------------
@@ -209,5 +211,68 @@ public class Persistencia {
         ArrayList<Presidente> presidente = lerPresidente();
         presidente.add(novo);
         salvarPresidente(presidente);
+    }
+
+    // ---------------- USUARIOS ----------------
+
+    // Salva a lista de usuarios no arquivo binario
+    public static void salvarUsuarios(ArrayList<Usuario> usuarios) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ARQ_USUARIOS))) {
+            oos.writeObject(usuarios);
+            System.out.println("Lista de usuarios salva com sucesso.");
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar usuarios: " + e.getMessage());
+        }
+    }
+
+    // Le a lista de usuarios do arquivo binario
+    public static ArrayList<Usuario> lerUsuarios() {
+        ArrayList<Usuario> lista = new ArrayList<>();
+        File arq = new File(ARQ_USUARIOS);
+        if (!arq.exists()) return lista;
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ARQ_USUARIOS))) {
+            lista = (ArrayList<Usuario>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Erro ao ler usuarios: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    // Adiciona um novo usuario e regrava o arquivo
+    public static void adicionarUsuario(Usuario novo) {
+        ArrayList<Usuario> usuarios = lerUsuarios();
+        usuarios.add(novo);
+        salvarUsuarios(usuarios);
+    }
+
+    // ---------------- SESSAO ATUAL ----------------
+
+    // Salva a sessao atual no arquivo binario
+    public static void salvarSessaoAtual(SessaoAtual sessaoAtual) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ARQ_SESSAO_ATUAL))) {
+            oos.writeObject(sessaoAtual);
+            System.out.println("Sessao atual salva com sucesso.");
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar sessao atual: " + e.getMessage());
+        }
+    }
+
+    // Le a sessao atual do arquivo binario
+    public static SessaoAtual lerSessaoAtual() {
+        File arq = new File(ARQ_SESSAO_ATUAL);
+        if (!arq.exists()) return new SessaoAtual(0, false);
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ARQ_SESSAO_ATUAL))) {
+            return (SessaoAtual) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Erro ao ler sessao atual: " + e.getMessage());
+        }
+        return new SessaoAtual(0, false);
+    }
+
+    // Encerra a sessao atual
+    public static void encerrarSessaoAtual() {
+        salvarSessaoAtual(new SessaoAtual(0, false));
     }
 }
