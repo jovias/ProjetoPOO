@@ -10,8 +10,8 @@ import javafx.beans.property.SimpleStringProperty;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import com.mitra.Medico;
-import com.mitra.Persistencia;
+import com.mitra.model.Medico;
+import com.mitra.model.Persistencia;
 
 public class MedicoController {
 
