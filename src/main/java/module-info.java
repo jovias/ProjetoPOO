@@ -5,4 +5,6 @@ module com.example.atleta {
 
     opens com.mitra to javafx.fxml;
     exports com.mitra;
+    exports com.mitra.model;
+    opens com.mitra.model to javafx.fxml;
 }

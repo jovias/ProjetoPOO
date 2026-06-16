@@ -1,20 +1,18 @@
-package com.mitra;
+package com.mitra.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Atleta implements Serializable {
+public class Medico implements Serializable {
     private int id;
     private String nome;
     private LocalDate dataNascimento;
-    private double peso;
-    private double altura;
+    private int CRM;
 
-    public Atleta(int id, String nome, LocalDate dataNascimento, double peso, double altura) {
+    public Medico(int id, String nome, LocalDate dataNascimento, int CRM) {
         this.id = id;
         this.nome = nome;
         this.dataNascimento = dataNascimento;
-        this.peso = peso;
-        this.altura = altura;
+        this.CRM = CRM;
     }
 
     // Getters e Setters
@@ -24,8 +22,6 @@ public class Atleta implements Serializable {
     public void setNome(String nome) { this.nome = nome; }
     public LocalDate getDataNascimento() { return dataNascimento; }
     public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
-    public double getPeso() { return peso; }
-    public void setPeso(double peso) { this.peso = peso; }
-    public double getAltura() { return altura; }
-    public void setAltura(double altura) { this.altura = altura; }
+    public int getCRM() { return CRM; }
+    public void setCRM(int CRM) { this.CRM = CRM; }
 }

@@ -1,4 +1,4 @@
-package com.mitra;
+package com.mitra.model;
 
 import java.io.*;
 import java.util.ArrayList;
