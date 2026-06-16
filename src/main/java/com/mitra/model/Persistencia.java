@@ -14,6 +14,7 @@ public class Persistencia {
     private static final String ARQ_PRESIDENTE = "presidente.dat";
     private static final String ARQ_USUARIOS = "usuarios.dat";
     private static final String ARQ_SESSAO_ATUAL = "sessaoAtual.dat";
+    private static final String ARQ_JOGOS = "jogos.dat";
 
 
     // ---------------- ATLETAS ----------------
@@ -274,5 +275,38 @@ public class Persistencia {
     // Encerra a sessao atual
     public static void encerrarSessaoAtual() {
         salvarSessaoAtual(new SessaoAtual(0, false));
+    }
+
+    // ---------------- JOGOS ----------------
+
+    // Salva a lista de jogos no arquivo binario
+    public static void salvarJogos(ArrayList<Jogo> jogos) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ARQ_JOGOS))) {
+            oos.writeObject(jogos);
+            System.out.println("Lista de jogos salva com sucesso.");
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar jogos: " + e.getMessage());
+        }
+    }
+
+    // Le a lista de jogos do arquivo binario
+    public static ArrayList<Jogo> lerJogos() {
+        ArrayList<Jogo> lista = new ArrayList<>();
+        File arq = new File(ARQ_JOGOS);
+        if (!arq.exists()) return lista;
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ARQ_JOGOS))) {
+            lista = (ArrayList<Jogo>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Erro ao ler jogos: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    // Adiciona um novo jogo e regrava o arquivo
+    public static void adicionarJogo(Jogo novo) {
+        ArrayList<Jogo> jogos = lerJogos();
+        jogos.add(novo);
+        salvarJogos(jogos);
     }
 }
