@@ -15,6 +15,8 @@ public class Persistencia {
     private static final String ARQ_USUARIOS = "usuarios.dat";
     private static final String ARQ_SESSAO_ATUAL = "sessaoAtual.dat";
     private static final String ARQ_JOGOS = "jogos.dat";
+    private static final String ARQ_METRICAS = "metricas.dat";
+    private static final String ARQ_EXERCICIO = "exercicio.dat";
 
 
     // ---------------- ATLETAS ----------------
@@ -308,5 +310,71 @@ public class Persistencia {
         ArrayList<Jogo> jogos = lerJogos();
         jogos.add(novo);
         salvarJogos(jogos);
+    }
+
+    // ---------------- METRICAS ----------------
+
+    // Salva a lista de métricas no arquivo binário
+    public static void salvarMetricas(ArrayList<Metricas> metricas) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ARQ_METRICAS))) {
+            oos.writeObject(metricas);
+            System.out.println("Lista de métricas salva com sucesso.");
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar métricas: " + e.getMessage());
+        }
+    }
+
+    // Lê a lista de métricas do arquivo binário
+    public static ArrayList<Metricas> lerMetricas() {
+        ArrayList<Metricas> lista = new ArrayList<>();
+        File arq = new File(ARQ_METRICAS);
+        if (!arq.exists()) return lista;
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ARQ_METRICAS))) {
+            lista = (ArrayList<Metricas>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Erro ao ler métricas: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    // Adiciona uma nova métrica e regrava o arquivo
+    public static void adicionarMetrica(Metricas novo) {
+        ArrayList<Metricas> metricas = lerMetricas();
+        metricas.add(novo);
+        salvarMetricas(metricas);
+    }
+
+    // ---------------- EXERCICIOS ----------------
+
+    // Salva a lista de exercícios no arquivo binário
+    public static void salvarExercicios(ArrayList<Exercicio> exercicios) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ARQ_EXERCICIO))) {
+            oos.writeObject(exercicios);
+            System.out.println("Lista de exercícios salva com sucesso.");
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar exercícios: " + e.getMessage());
+        }
+    }
+
+    // Lê a lista de exercícios do arquivo binário
+    public static ArrayList<Exercicio> lerExercicios() {
+        ArrayList<Exercicio> lista = new ArrayList<>();
+        File arq = new File(ARQ_EXERCICIO);
+        if (!arq.exists()) return lista;
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ARQ_EXERCICIO))) {
+            lista = (ArrayList<Exercicio>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Erro ao ler exercícios: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    // Adiciona um novo exercício e regrava o arquivo
+    public static void adicionarExercicio(Exercicio novo) {
+        ArrayList<Exercicio> exercicios = lerExercicios();
+        exercicios.add(novo);
+        salvarExercicios(exercicios);
     }
 }

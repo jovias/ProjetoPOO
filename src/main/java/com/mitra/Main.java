@@ -21,12 +21,14 @@ public class Main extends Application {
         Tab tabJogos = new Tab("Jogos", new JogoController().mostrar());
         Tab tabMedico = new Tab("Médico", new MedicoController().mostrar());
         Tab tabPresidente = new Tab("Presidente", new PresidenteController().mostrar());
+        Tab tabExercicio = new Tab("Exercício", new ExercicioController().mostrar());
+        Tab tabMetricas = new Tab("Métricas", new MetricasController().mostrar());
         Tab tabLogin = new Tab("Login");
         Tab tabPerfil = new Tab("Perfil");
 
         Runnable aoLogout = () -> {
             try {
-                tabPane.getTabs().removeAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabJogos, tabMedico, tabPresidente, tabPerfil);
+                tabPane.getTabs().removeAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabJogos, tabMedico, tabPresidente, tabPerfil, tabExercicio, tabMetricas);
                 tabPane.getTabs().add(tabLogin);
                 tabPane.getSelectionModel().select(tabLogin);
             } catch (Exception ex) {
@@ -38,8 +40,8 @@ public class Main extends Application {
             try {
                 tabPerfil.setContent(new UsuarioController(aoLogout).mostrar());
                 tabPane.getTabs().remove(tabLogin);
-                tabPane.getTabs().removeAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabJogos, tabMedico, tabPresidente, tabPerfil);
-                tabPane.getTabs().addAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabJogos, tabMedico, tabPresidente, tabPerfil);
+                tabPane.getTabs().removeAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabJogos, tabMedico, tabPresidente, tabPerfil, tabExercicio, tabMetricas);
+                tabPane.getTabs().addAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabJogos, tabMedico, tabPresidente, tabPerfil, tabExercicio, tabMetricas);
                 tabPane.getSelectionModel().select(tabPerfil);
             } catch (Exception ex) {
                 new Alert(Alert.AlertType.ERROR, "Erro ao liberar abas: " + ex.getMessage()).show();
@@ -51,7 +53,7 @@ public class Main extends Application {
 
         try {
             if (loginController.temSessaoAtiva()) {
-                tabPane.getTabs().addAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabJogos, tabMedico, tabPresidente, tabPerfil);
+                tabPane.getTabs().addAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabJogos, tabMedico, tabPresidente, tabPerfil, tabExercicio, tabMetricas);
                 tabPane.getSelectionModel().select(tabPerfil);
             } else {
                 tabPane.getTabs().add(tabLogin);
@@ -70,6 +72,8 @@ public class Main extends Application {
         tabJogos.setClosable(false);
         tabMedico.setClosable(false);
         tabPresidente.setClosable(false);
+        tabExercicio.setClosable(false);
+        tabMetricas.setClosable(false);
 
         Scene scene = new Scene(tabPane, 1000, 800);
         stage.setScene(scene);
