@@ -9,8 +9,8 @@ import javafx.beans.property.SimpleStringProperty;
 
 import java.util.ArrayList;
 
-import com.mitra.Equipes;
-import com.mitra.Persistencia;
+import com.mitra.model.Equipes;
+import com.mitra.model.Persistencia;
 
 public class EquipesController {
 

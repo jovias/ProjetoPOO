@@ -10,8 +10,8 @@ import javafx.beans.property.SimpleStringProperty;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import com.mitra.Presidente;
-import com.mitra.Persistencia;
+import com.mitra.model.Presidente;
+import com.mitra.model.Persistencia;
 
 public class PresidenteController {
 

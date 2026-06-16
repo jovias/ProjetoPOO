@@ -9,8 +9,8 @@ import javafx.beans.property.SimpleStringProperty;
 
 import java.util.ArrayList;
 
-import com.mitra.Treinador;
-import com.mitra.Persistencia;
+import com.mitra.model.Treinador;
+import com.mitra.model.Persistencia;
 
 public class TreinadorController {
 
