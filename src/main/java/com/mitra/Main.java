@@ -21,9 +21,11 @@ public class Main extends Application {
         Tab tabEquipes = new Tab("Equipes", new EquipesController().mostrar());
         Tab tabMedico = new Tab("Médico", new MedicoController().mostrar());
         Tab tabPresidente = new Tab("Presidente", new PresidenteController().mostrar());
+        Tab tabExercicio = new Tab("Exercício", new ExercicioController().mostrar());
+        Tab tabMetricas = new Tab("Métricas", new MetricasController().mostrar());
 
         // Adiciona todas as abas ao TabPane
-        tabPane.getTabs().addAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabMedico, tabPresidente);
+        tabPane.getTabs().addAll(tabAtleta, tabTreinador, tabModalidades, tabEquipes, tabMedico, tabPresidente, tabExercicio, tabMetricas);
 
         // Cena principal
         Scene scene = new Scene(tabPane, 1000, 800);
