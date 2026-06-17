@@ -377,4 +377,69 @@ public class Persistencia {
         exercicios.add(novo);
         salvarExercicios(exercicios);
     }
+    // ---------------- MASSAGISTA ----------------
+
+    // Salva a lista de massagistas no arquivo binário
+    public static void salvarMassagistas(ArrayList<Massagista> massagistas) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("massagistas.dat"))) {
+            oos.writeObject(massagistas);
+            System.out.println("Lista de massagistas salva com sucesso.");
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar massagistas: " + e.getMessage());
+        }
+    }
+
+    // Lê a lista de massagistas do arquivo binário
+    public static ArrayList<Massagista> lerMassagistas() {
+        ArrayList<Massagista> lista = new ArrayList<>();
+        File arq = new File("massagistas.dat");
+        if (!arq.exists()) return lista;
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("massagistas.dat"))) {
+            lista = (ArrayList<Massagista>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Erro ao ler massagistas: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    // Adiciona um novo massagista e regrava o arquivo
+    public static void adicionarMassagista(Massagista novo) {
+        ArrayList<Massagista> massagistas = lerMassagistas();
+        massagistas.add(novo);
+        salvarMassagistas(massagistas);
+    }
+
+    // ---------------- IMPRENSA ----------------
+
+    // Salva a lista de imprensa no arquivo binário
+    public static void salvarImprensa(ArrayList<Imprensa> imprensa) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("imprensa.dat"))) {
+            oos.writeObject(imprensa);
+            System.out.println("Lista de imprensa salva com sucesso.");
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar imprensa: " + e.getMessage());
+        }
+    }
+
+    // Lê a lista de imprensa do arquivo binário
+    public static ArrayList<Imprensa> lerImprensa() {
+        ArrayList<Imprensa> lista = new ArrayList<>();
+        File arq = new File("imprensa.dat");
+        if (!arq.exists()) return lista;
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("imprensa.dat"))) {
+            lista = (ArrayList<Imprensa>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Erro ao ler imprensa: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    // Adiciona um novo registro de imprensa e regrava o arquivo
+    public static void adicionarImprensa(Imprensa novo) {
+        ArrayList<Imprensa> imprensa = lerImprensa();
+        imprensa.add(novo);
+        salvarImprensa(imprensa);
+    }
 }

@@ -23,32 +23,21 @@ public class MassagistaController {
         titulo.setFont(new Font("Arial", 20));
 
         // Campos de entrada
-        TextField idField = new TextField();
-        idField.setPromptText("ID");
+        TextField idField = new TextField(); idField.setPromptText("ID");
+        TextField nomeField = new TextField(); nomeField.setPromptText("Nome");
+        DatePicker nascimentoField = new DatePicker(); nascimentoField.setPromptText("Data de Nascimento");
+        TextField crefitoField = new TextField(); crefitoField.setPromptText("CREFITO");
+        TextField especialidadeField = new TextField(); especialidadeField.setPromptText("Especialidade");
 
-        TextField nomeField = new TextField();
-        nomeField.setPromptText("Nome");
-
-        DatePicker nascimentoField = new DatePicker();
-        nascimentoField.setPromptText("Data de Nascimento");
-
-        TextField crefitoField = new TextField();
-        crefitoField.setPromptText("CREFITO");
-
-        TextField especialidadeField = new TextField();
-        especialidadeField.setPromptText("Especialidade (Esportiva, Relaxante...)");
-
-        // Botões de ação
+        // Botões
         Button btnSalvar    = new Button("Salvar");
         Button btnListar    = new Button("Listar");
         Button btnAtualizar = new Button("Atualizar");
         Button btnExcluir   = new Button("Excluir");
         HBox botoes = new HBox(10, btnSalvar, btnListar, btnAtualizar, btnExcluir);
 
-        // Tabela de exibição
+        // Tabela
         TableView<Massagista> tabela = new TableView<>();
-
-        // Colunas da tabela
         TableColumn<Massagista, String> colId = new TableColumn<>("ID");
         colId.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getId())));
 
@@ -66,7 +55,7 @@ public class MassagistaController {
 
         tabela.getColumns().addAll(colId, colNome, colNascimento, colCrefito, colEspecialidade);
 
-        // Preencher campos ao selecionar linha na tabela
+        // Preencher campos ao selecionar linha
         tabela.getSelectionModel().selectedItemProperty().addListener((obs, antigo, selecionado) -> {
             if (selecionado != null) {
                 idField.setText(String.valueOf(selecionado.getId()));
@@ -77,19 +66,19 @@ public class MassagistaController {
             }
         });
 
-        // Adicionar
+        // Salvar novo
         btnSalvar.setOnAction((ActionEvent e) -> {
             try {
-                int id               = Integer.parseInt(idField.getText());
-                String nome          = nomeField.getText();
+                int id = Integer.parseInt(idField.getText());
+                String nome = nomeField.getText();
                 LocalDate nascimento = nascimentoField.getValue();
-                String crefito       = crefitoField.getText();
+                String crefito = crefitoField.getText();
                 String especialidade = especialidadeField.getText();
 
                 Massagista massagista = new Massagista(id, nome, nascimento, crefito, especialidade);
                 Persistencia.adicionarMassagista(massagista);
 
-                tabela.getItems().add(massagista);
+                tabela.getItems().setAll(Persistencia.lerMassagistas());
                 new Alert(Alert.AlertType.INFORMATION, "Massagista salvo com sucesso!").show();
             } catch (Exception ex) {
                 new Alert(Alert.AlertType.ERROR, "Erro ao salvar: " + ex.getMessage()).show();
@@ -106,15 +95,7 @@ public class MassagistaController {
             Massagista selecionado = tabela.getSelectionModel().getSelectedItem();
             if (selecionado != null) {
                 ArrayList<Massagista> lista = Persistencia.lerMassagistas();
-
-                // Busca pelo ID e remove
-                for (int i = 0; i < lista.size(); i++) {
-                    if (lista.get(i).getId() == selecionado.getId()) {
-                        lista.remove(i);
-                        break;
-                    }
-                }
-
+                lista.removeIf(m -> m.getId() == selecionado.getId());
                 Persistencia.salvarMassagistas(lista);
                 tabela.getItems().setAll(lista);
                 new Alert(Alert.AlertType.INFORMATION, "Massagista excluído com sucesso!").show();
@@ -126,22 +107,18 @@ public class MassagistaController {
             Massagista selecionado = tabela.getSelectionModel().getSelectedItem();
             if (selecionado != null) {
                 try {
-                    // Aplica os novos valores
                     selecionado.setNome(nomeField.getText());
                     selecionado.setDataNascimento(nascimentoField.getValue());
                     selecionado.setCrefito(crefitoField.getText());
                     selecionado.setEspecialidade(especialidadeField.getText());
 
                     ArrayList<Massagista> lista = Persistencia.lerMassagistas();
-
-                    // Substitui pelo ID
                     for (int i = 0; i < lista.size(); i++) {
                         if (lista.get(i).getId() == selecionado.getId()) {
                             lista.set(i, selecionado);
                             break;
                         }
                     }
-
                     Persistencia.salvarMassagistas(lista);
                     tabela.getItems().setAll(lista);
                     new Alert(Alert.AlertType.INFORMATION, "Massagista atualizado com sucesso!").show();
@@ -151,12 +128,8 @@ public class MassagistaController {
             }
         });
 
-        // Monta o layout
-        box.getChildren().addAll(
-            titulo,
-            idField, nomeField, nascimentoField, crefitoField, especialidadeField,
-            botoes, tabela
-        );
+        // Layout final
+        box.getChildren().addAll(titulo, idField, nomeField, nascimentoField, crefitoField, especialidadeField, botoes, tabela);
         return box;
     }
 }

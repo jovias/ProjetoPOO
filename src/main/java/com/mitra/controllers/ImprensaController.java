@@ -18,37 +18,26 @@ public class ImprensaController {
     public VBox mostrar() {
         VBox box = new VBox(10);
 
-        // Título da tela
+        // Título
         Label titulo = new Label("Cadastro de Imprensa");
         titulo.setFont(new Font("Arial", 20));
 
-        // Campos de entrada
-        TextField idField = new TextField();
-        idField.setPromptText("ID");
+        // Campos
+        TextField idField = new TextField(); idField.setPromptText("ID");
+        TextField nomeField = new TextField(); nomeField.setPromptText("Nome");
+        TextField veiculoField = new TextField(); veiculoField.setPromptText("Veículo");
+        TextField credencialField = new TextField(); credencialField.setPromptText("Credencial");
+        DatePicker dataCredencialField = new DatePicker(); dataCredencialField.setPromptText("Data da Credencial");
 
-        TextField nomeField = new TextField();
-        nomeField.setPromptText("Nome");
-
-        TextField veiculoField = new TextField();
-        veiculoField.setPromptText("Veículo (TV, Jornal, Rádio...)");
-
-        TextField credencialField = new TextField();
-        credencialField.setPromptText("Credencial");
-
-        DatePicker dataCredencialField = new DatePicker();
-        dataCredencialField.setPromptText("Data da Credencial");
-
-        // Botões de ação
+        // Botões
         Button btnSalvar    = new Button("Salvar");
         Button btnListar    = new Button("Listar");
         Button btnAtualizar = new Button("Atualizar");
         Button btnExcluir   = new Button("Excluir");
         HBox botoes = new HBox(10, btnSalvar, btnListar, btnAtualizar, btnExcluir);
 
-        // Tabela de exibição
+        // Tabela
         TableView<Imprensa> tabela = new TableView<>();
-
-        // Colunas da tabela
         TableColumn<Imprensa, String> colId = new TableColumn<>("ID");
         colId.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getId())));
 
@@ -66,7 +55,7 @@ public class ImprensaController {
 
         tabela.getColumns().addAll(colId, colNome, colVeiculo, colCredencial, colData);
 
-        // Preencher campos ao selecionar linha na tabela
+        // Preencher campos ao selecionar linha
         tabela.getSelectionModel().selectedItemProperty().addListener((obs, antigo, selecionado) -> {
             if (selecionado != null) {
                 idField.setText(String.valueOf(selecionado.getId()));
@@ -77,19 +66,19 @@ public class ImprensaController {
             }
         });
 
-        // Adicionar
+        // Salvar novo
         btnSalvar.setOnAction((ActionEvent e) -> {
             try {
-                int id               = Integer.parseInt(idField.getText());
-                String nome          = nomeField.getText();
-                String veiculo       = veiculoField.getText();
-                String credencial    = credencialField.getText();
-                LocalDate dataCred   = dataCredencialField.getValue();
+                int id = Integer.parseInt(idField.getText());
+                String nome = nomeField.getText();
+                String veiculo = veiculoField.getText();
+                String credencial = credencialField.getText();
+                LocalDate dataCred = dataCredencialField.getValue();
 
                 Imprensa imprensa = new Imprensa(id, nome, veiculo, credencial, dataCred);
                 Persistencia.adicionarImprensa(imprensa);
 
-                tabela.getItems().add(imprensa);
+                tabela.getItems().setAll(Persistencia.lerImprensa());
                 new Alert(Alert.AlertType.INFORMATION, "Imprensa salva com sucesso!").show();
             } catch (Exception ex) {
                 new Alert(Alert.AlertType.ERROR, "Erro ao salvar: " + ex.getMessage()).show();
@@ -106,15 +95,7 @@ public class ImprensaController {
             Imprensa selecionado = tabela.getSelectionModel().getSelectedItem();
             if (selecionado != null) {
                 ArrayList<Imprensa> lista = Persistencia.lerImprensa();
-
-                // Busca pelo ID e remove
-                for (int i = 0; i < lista.size(); i++) {
-                    if (lista.get(i).getId() == selecionado.getId()) {
-                        lista.remove(i);
-                        break;
-                    }
-                }
-
+                lista.removeIf(i -> i.getId() == selecionado.getId());
                 Persistencia.salvarImprensa(lista);
                 tabela.getItems().setAll(lista);
                 new Alert(Alert.AlertType.INFORMATION, "Imprensa excluída com sucesso!").show();
@@ -126,22 +107,18 @@ public class ImprensaController {
             Imprensa selecionado = tabela.getSelectionModel().getSelectedItem();
             if (selecionado != null) {
                 try {
-                    // Aplica os novos valores
                     selecionado.setNome(nomeField.getText());
                     selecionado.setVeiculo(veiculoField.getText());
                     selecionado.setCredencial(credencialField.getText());
                     selecionado.setDataCredencial(dataCredencialField.getValue());
 
                     ArrayList<Imprensa> lista = Persistencia.lerImprensa();
-
-                    // Substitui pelo ID
                     for (int i = 0; i < lista.size(); i++) {
                         if (lista.get(i).getId() == selecionado.getId()) {
                             lista.set(i, selecionado);
                             break;
                         }
                     }
-
                     Persistencia.salvarImprensa(lista);
                     tabela.getItems().setAll(lista);
                     new Alert(Alert.AlertType.INFORMATION, "Imprensa atualizada com sucesso!").show();
@@ -151,12 +128,8 @@ public class ImprensaController {
             }
         });
 
-        // Monta o layout
-        box.getChildren().addAll(
-            titulo,
-            idField, nomeField, veiculoField, credencialField, dataCredencialField,
-            botoes, tabela
-        );
+        // Layout final
+        box.getChildren().addAll(titulo, idField, nomeField, veiculoField, credencialField, dataCredencialField, botoes, tabela);
         return box;
     }
 }
