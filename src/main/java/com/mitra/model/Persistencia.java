@@ -15,7 +15,7 @@ public class Persistencia {
     private static final String ARQ_USUARIOS = "usuarios.dat";
     private static final String ARQ_SESSAO_ATUAL = "sessaoAtual.dat";
     private static final String ARQ_JOGOS = "jogos.dat";
-    private static final String ARQ_METRICAS = "metricas.dat";
+    private static final String ARQ_AVALIACAO = "avaliacao.dat";
     private static final String ARQ_EXERCICIO = "exercicio.dat";
 
 
@@ -312,37 +312,37 @@ public class Persistencia {
         salvarJogos(jogos);
     }
 
-    // ---------------- METRICAS ----------------
+// ---------------- AVALIACAO FISICA ----------------
 
-    // Salva a lista de métricas no arquivo binário
-    public static void salvarMetricas(ArrayList<Metricas> metricas) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ARQ_METRICAS))) {
-            oos.writeObject(metricas);
-            System.out.println("Lista de métricas salva com sucesso.");
+    // Salva a lista de avaliações físicas no arquivo binário
+    public static void salvarAvaliacoesFisicas(ArrayList<AvaliacaoFisica> avaliacoes) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ARQ_AVALIACAO))) {
+            oos.writeObject(avaliacoes);
+            System.out.println("Lista de avaliações físicas salva com sucesso.");
         } catch (IOException e) {
-            System.err.println("Erro ao salvar métricas: " + e.getMessage());
+            System.err.println("Erro ao salvar avaliações físicas: " + e.getMessage());
         }
     }
 
-    // Lê a lista de métricas do arquivo binário
-    public static ArrayList<Metricas> lerMetricas() {
-        ArrayList<Metricas> lista = new ArrayList<>();
-        File arq = new File(ARQ_METRICAS);
+    // Lê a lista de avaliações físicas do arquivo binário
+    public static ArrayList<AvaliacaoFisica> lerAvaliacoesFisicas() {
+        ArrayList<AvaliacaoFisica> lista = new ArrayList<>();
+        File arq = new File(ARQ_AVALIACAO);
         if (!arq.exists()) return lista;
 
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ARQ_METRICAS))) {
-            lista = (ArrayList<Metricas>) ois.readObject();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ARQ_AVALIACAO))) {
+            lista = (ArrayList<AvaliacaoFisica>) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Erro ao ler métricas: " + e.getMessage());
+            System.err.println("Erro ao ler avaliações físicas: " + e.getMessage());
         }
         return lista;
     }
 
-    // Adiciona uma nova métrica e regrava o arquivo
-    public static void adicionarMetrica(Metricas novo) {
-        ArrayList<Metricas> metricas = lerMetricas();
-        metricas.add(novo);
-        salvarMetricas(metricas);
+    // Adiciona uma nova avaliação física e regrava o arquivo
+    public static void adicionarAvaliacaoFisica(AvaliacaoFisica novo) {
+        ArrayList<AvaliacaoFisica> avaliacoes = lerAvaliacoesFisicas();
+        avaliacoes.add(novo);
+        salvarAvaliacoesFisicas(avaliacoes);
     }
 
     // ---------------- EXERCICIOS ----------------
